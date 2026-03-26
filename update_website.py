@@ -7,7 +7,7 @@
 1. 从 memory/ 文件夹读取每日记忆文件
 2. 从 consolidated_diary_content.md 读取统计数据
 3. 更新 data.js 文件
-4. （可选）提交到 Git
+4. 提交到 Git 并推送到 GitHub
 
 使用方法:
     python3 update_website.py
@@ -17,6 +17,7 @@ import os
 import sys
 import json
 import re
+import subprocess
 from datetime import datetime
 from pathlib import Path
 
@@ -237,11 +238,43 @@ const diaries = [
     
     return True
 
+def git_commit_and_push():
+    """提交到 Git 并推送到 GitHub"""
+    try:
+        os.chdir(WEBSITE_PATH)
+        
+        # 检查是否有变更
+        result = subprocess.run(['git', 'status', '--porcelain'], capture_output=True, text=True)
+        if not result.stdout.strip():
+            print("ℹ️  没有变更需要提交")
+            return True
+        
+        # 添加所有变更
+        subprocess.run(['git', 'add', '.'], check=True)
+        
+        # 提交
+        commit_message = f"自动更新：{datetime.now().strftime('%Y-%m-%d %H:%M')}"
+        subprocess.run(['git', 'commit', '-m', commit_message], check=True)
+        
+        # 推送到 GitHub
+        subprocess.run(['git', 'push', 'origin', 'master'], check=True)
+        
+        print("✅ 已推送到 GitHub: https://github.com/awesomefrankge-AI/sensen-diary")
+        return True
+    except subprocess.CalledProcessError as e:
+        print(f"⚠️  Git 操作失败: {e}")
+        print("ℹ️  数据已更新到本地，但未能推送到 GitHub")
+        return False
+    except Exception as e:
+        print(f"⚠️  Git 操作出错: {e}")
+        return False
+
 def main():
     """主函数"""
     try:
         update_data_js()
-        print("🎉 赛博森森成长网站数据更新完成！")
+        git_commit_and_push()
+        print("🎉 赛博森森成长网站更新完成！")
         return 0
     except Exception as e:
         print(f"❌ 更新失败: {e}")
