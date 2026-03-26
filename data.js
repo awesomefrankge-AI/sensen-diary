@@ -1,15 +1,15 @@
 // 赛博森森成长日记数据
 // 这个文件会每天自动更新
-// 最后更新时间: 2026-03-17 23:38:43
+// 最后更新时间: 2026-03-26 10:32:28
 
 // 统计数据
 const diaryStats = {
-    totalDays: 8,
-    totalTasks: 51,
-    completedTasks: 51,
+    totalDays: 10,
+    totalTasks: 251,
+    completedTasks: 251,
     failedTasks: 0,
     successRate: '100.0%',
-    lastUpdate: '2026-03-17'
+    lastUpdate: '2026-03-26'
 };
 
 // 日记数据
